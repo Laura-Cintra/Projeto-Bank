@@ -7,6 +7,7 @@ import lombok.Data;
 
 @Data
 public class Account {
+    private Long id;
     private Long accountNumber;
     private String agency;
     private String holderName; 
