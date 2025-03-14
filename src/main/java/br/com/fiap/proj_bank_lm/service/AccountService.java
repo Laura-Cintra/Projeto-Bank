@@ -32,6 +32,15 @@ public class AccountService {
         return balance.subtract(value);
     }
 
+    public BigDecimal addBalance(BigDecimal balance, BigDecimal value){
+        return balance.add(value);
+    }
+
+    public void checkValue(BigDecimal value) {
+        if (!checkBalance(value)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Valor deve ser maior que 0, valor: " + value);
+        }
+    }
 
     public boolean requiredInputs(Account account) {
         return account.getHolderName().isEmpty() || account.getCpf().isEmpty();

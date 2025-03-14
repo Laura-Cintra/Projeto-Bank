@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import br.com.fiap.proj_bank_lm.model.Account;
+import br.com.fiap.proj_bank_lm.model.AccountMovements;
+import br.com.fiap.proj_bank_lm.model.AccountPix;
 import br.com.fiap.proj_bank_lm.service.AccountService;
 
 @RestController
@@ -58,6 +60,39 @@ public class AccountController {
         log.info("Encerrando a conta: " + id);
         getById(id).setActivate(false);
         return ResponseEntity.noContent().build();
+    }
+
+    // endpoints para movimentação de conta
+
+    @PostMapping("/deposito")
+    public ResponseEntity<Account> deposit(@RequestBody AccountMovements accountMovements) {
+        Account account = getById(accountMovements.getAccountNumber());
+
+        log.info("Realizando depósito na conta " + accountMovements.getAccountNumber());
+        accountService.isActivateAccount(account.isActivate());
+        account.setBalance(accountService.addBalance(account.getBalance(), accountMovements.getAmount()));
+        return ResponseEntity.ok(account);
+    }
+
+    @PostMapping("/saque")
+    public ResponseEntity<Account> saque(@RequestBody AccountMovements accountMovements) {
+        Account account = getById(accountMovements.getAccountNumber());
+
+        log.info("Realizando saque na conta " + accountMovements.getAccountNumber());
+        accountService.isActivateAccount(account.isActivate());
+        account.setBalance(accountService.subtractBalance(account.getBalance(), accountMovements.getAmount()));
+        return ResponseEntity.ok(account);
+    }
+
+    @PostMapping("/pix")
+    public ResponseEntity<Account> pix(@RequestBody AccountPix accountPix){
+        Account account = getById(accountPix.getAccountNumber());
+        Account targetAccount = getById(accountPix.getTargetAccount());
+        accountService.isActivateAccount(account.isActivate());
+        accountService.checkValue(accountPix.getAmount());
+        account.setBalance((accountService.subtractBalance(account.getBalance(), accountPix.getAmount())));
+        targetAccount.setBalance(accountService.addBalance(account.getBalance(), accountPix.getAmount()));
+        return ResponseEntity.ok(account);
     }
     
     // métodos auxiliares
