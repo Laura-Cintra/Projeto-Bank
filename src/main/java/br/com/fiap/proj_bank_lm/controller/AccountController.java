@@ -36,6 +36,7 @@ public class AccountController {
         }
 
         account.setAccountNumber(Math.abs(new Random().nextLong()));
+        account.setActivate(true);
 
         repository.add(account);
         return ResponseEntity.ok(account);
@@ -58,6 +59,7 @@ public class AccountController {
         getById(id).setActivate(false);
         return ResponseEntity.noContent().build();
     }
+    
     // métodos auxiliares
     private Account getByCpf(String cpf) {
         return repository.stream()

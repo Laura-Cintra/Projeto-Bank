@@ -12,7 +12,7 @@ public class Account {
     private String holderName; 
     private String cpf;
     private LocalDate openDate;
-    private BigDecimal openingBalance;
+    private BigDecimal balance;
     private boolean activate;
     private AccountType typeAccount;
 }
