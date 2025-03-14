@@ -70,6 +70,7 @@ public class AccountController {
 
         log.info("Realizando depósito na conta " + accountMovements.getAccountNumber());
         accountService.isActivateAccount(account.isActivate());
+        accountService.checkValue(accountMovements.getAmount());
         account.setBalance(accountService.addBalance(account.getBalance(), accountMovements.getAmount()));
         return ResponseEntity.ok(account);
     }
@@ -80,6 +81,7 @@ public class AccountController {
 
         log.info("Realizando saque na conta " + accountMovements.getAccountNumber());
         accountService.isActivateAccount(account.isActivate());
+        accountService.checkValue(accountMovements.getAmount());
         account.setBalance(accountService.subtractBalance(account.getBalance(), accountMovements.getAmount()));
         return ResponseEntity.ok(account);
     }
@@ -91,7 +93,7 @@ public class AccountController {
         accountService.isActivateAccount(account.isActivate());
         accountService.checkValue(accountPix.getAmount());
         account.setBalance((accountService.subtractBalance(account.getBalance(), accountPix.getAmount())));
-        targetAccount.setBalance(accountService.addBalance(account.getBalance(), accountPix.getAmount()));
+        targetAccount.setBalance(accountService.addBalance(targetAccount.getBalance(), accountPix.getAmount()));
         return ResponseEntity.ok(account);
     }
     
