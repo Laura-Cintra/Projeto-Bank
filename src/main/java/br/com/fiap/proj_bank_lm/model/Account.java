@@ -7,13 +7,12 @@ import lombok.Data;
 
 @Data
 public class Account {
-    private Long id;
     private Long accountNumber;
     private String agency;
     private String holderName; 
-    private Long cpf;
+    private String cpf;
     private LocalDate openDate;
     private BigDecimal openingBalance;
     private boolean activate;
-    private TypeAccount typeAccount;
+    private AccountType typeAccount;
 }

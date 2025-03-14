@@ -8,13 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import br.com.fiap.proj_bank_lm.model.Account;
@@ -41,7 +35,7 @@ public class AccountController {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Erro no corpo da requisição");
         }
 
-        account.setId(Math.abs(new Random().nextLong()));
+        account.setAccountNumber(Math.abs(new Random().nextLong()));
 
         repository.add(account);
         return ResponseEntity.ok(account);
@@ -50,25 +44,38 @@ public class AccountController {
     @GetMapping("/id/{id}")
     public ResponseEntity<Account> getToId(@PathVariable Long id) {
         log.info("Buscando uma conta pelo id: " + id);
-        return ResponseEntity.ok(getAccount(id, "id"));
+        return ResponseEntity.ok(getById(id));
     }
     @GetMapping("/cpf/{cpf}")
-    public ResponseEntity<Account> getToCpf(@PathVariable Long cpf) {
+    public ResponseEntity<Account> getToCpf(@PathVariable String cpf) {
         log.info("Buscando uma conta pelo cpf: " + cpf);
-        return ResponseEntity.ok(getAccount(cpf, "cpf"));
+        return ResponseEntity.ok(getByCpf(cpf));
     }
 
-    private Account getAccount(Long identify, String type) {
+    @DeleteMapping("{id}")
+    public ResponseEntity<Account> closeAccount(@PathVariable Long id) {
+        log.info("Encerrando a conta: " + id);
+        getById(id).setActivate(false);
+        return ResponseEntity.noContent().build();
+    }
+    // métodos auxiliares
+    private Account getByCpf(String cpf) {
         return repository.stream()
                 .filter(c -> {
-                    switch (type) {
-                        case "id": return c.getId().equals(identify);
-                        case "cpf": return c.getCpf().equals(identify);
-                        default: return false;
-                    }
+                    return c.getCpf().equals(cpf);
                 })
                 .findFirst()
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Conta não encontrada"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Conta não encontrada para o CPF " + cpf));
     }
-    
+
+    private Account getById(Long id) {
+        return repository.stream()
+                .filter(c -> {
+                    return c.getAccountNumber().equals(id);
+                })
+                .findFirst()
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Conta não encontrada para o CPF " + id));
+    }
+
+
 }

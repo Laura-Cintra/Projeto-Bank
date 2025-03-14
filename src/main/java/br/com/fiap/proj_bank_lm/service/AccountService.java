@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 
 import br.com.fiap.proj_bank_lm.model.Account;
-import br.com.fiap.proj_bank_lm.model.TypeAccount;
+import br.com.fiap.proj_bank_lm.model.AccountType;
 
 public class AccountService {
     private LocalDate date = LocalDate.now();
@@ -20,7 +20,7 @@ public class AccountService {
 
 
     public boolean requiredInputs(Account account){
-        return account.getHolderName().isEmpty() || account.getCpf() == 0;
+        return account.getHolderName().isEmpty() || account.getCpf().isEmpty();
     } 
 
     public boolean checkDate(LocalDate openDate){
@@ -40,7 +40,7 @@ public class AccountService {
     }
 
     public boolean checkTypeAccount(String type) {
-        for (TypeAccount typeAccount : TypeAccount.values()){
+        for (AccountType typeAccount : AccountType.values()){
             if (typeAccount.name().equalsIgnoreCase(type)) {
                 return true;
             }
